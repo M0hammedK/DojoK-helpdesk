@@ -17,44 +17,89 @@ export default function CreateForm() {
     setIsLoading(true)
 
     const ticket = {
-        title, body, priority, user_email:'mphammed@gmail.com'
+        title, body, priority, 
     }
 
-    const res = await fetch('http://localhost:4000/tickets',{
+    const res = await fetch('http://localhost:3000/api/tickets',{
         method: 'POST',
         headers: {'Content-Type' : 'application/json'},
         body: JSON.stringify(ticket)
     })
 
-    if(res.status === 201){
+    const json = await res.json()
+    
+    if(json.error){
+      console.log(json.error)
+    }
+    if(json.data){
       router.refresh()
       router.push('/tickets')
     }
+
   }
   return (
-    <form onSubmit={handleSubmt} className="w-1/2">
-      Title:
-      <input
-        type="text"
-        onChange={(e) => setTitle(e.target.value)}
-        value={title}
-      />
-      Body:
-      <input
-        type="text"
-        onChange={(e) => setBody(e.target.value)}
-        value={body}
-      />
-      Priority:
-      <select onChange={(e) => setPriority(e.target.value)} value={priority}>
-        <option value="low">Low</option>
-        <option value="medium">mMdium</option>
-        <option value="high">High</option>
-      </select>
+    <form onSubmit={handleSubmt} className="bg-white p-4 rounded shadow-sm w-1/2 justify-self-center">
+      <h4 className="text-primary fw-bold text-center mb-4">Add New Ticket</h4>
 
-      <button className="btn btn-primary" disabled={isLoading}>
-        {isLoading ? <span>Adding...</span> : <span>Add Ticket</span> }
-      </button>
+      {/* Title Input */}
+      <div className="mb-3">
+        <label htmlFor="title" className="form-label fw-semibold">
+          Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          className="form-control"
+          placeholder="Enter ticket title"
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
+          required
+        />
+      </div>
+
+      {/* Body Input */}
+      <div className="mb-3">
+        <label htmlFor="body" className="form-label fw-semibold">
+          Body
+        </label>
+        <textarea
+          id="body"
+          className="form-control"
+          placeholder="Enter ticket details"
+          rows="4"
+          onChange={(e) => setBody(e.target.value)}
+          value={body}
+          required
+        />
+      </div>
+
+      {/* Priority Dropdown */}
+      <div className="mb-3">
+        <label htmlFor="priority" className="form-label fw-semibold">
+          Priority
+        </label>
+        <select
+          id="priority"
+          className="form-select"
+          onChange={(e) => setPriority(e.target.value)}
+          value={priority}
+          required
+        >
+          <option value="" disabled>
+            Select priority
+          </option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+
+      {/* Submit Button */}
+      <div className="d-grid">
+        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+          {isLoading ? <span>Adding...</span> : <span>Add Ticket</span>}
+        </button>
+      </div>
     </form>
   );
 }

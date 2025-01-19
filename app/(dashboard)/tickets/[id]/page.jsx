@@ -1,41 +1,41 @@
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { notFound, PageNotFoundError } from "next/navigation";
+import { cookies } from "next/headers";
+import DeleteButton from "@/app/component/DeleteButton";
 
 export const dynamicParams = true;
 
-export async function generateMetadata({params}) {
-  const id = params.id
+export async function generateMetadata({ params }) {
+  const supabase = createServerComponentClient({ cookies });
 
-  const res = await fetch(`http://localhost:4000/tickets/${id}`)
-  const ticket = await res.json()
-  return{
-    title: `DojoK Helpdesk | ${ticket.title}` 
-  }
+  const { data: ticket } = await supabase
+    .from("Tickets")
+    .select()
+    .eq("id", params.id)
+    .single();
+
+  return {
+    title: `DojoK Helpdesk | ${ticket?.title || "Ticket not found"}`,
+  };
 }
 
-export async function generateStaticParams() {
-  const res = await fetch("http://localhost:4000/tickets");
-  const tickets = await res.json();
-
-  return tickets.map((ticket) => ({
-    id: ticket.id,
-  }));
-}
-
-async function getTicket(id) {
-  const res = await fetch("http://localhost:4000/tickets/" + id, {
-    next: {
-      revalidate: 60,
-    },
-  });
-
-  if (!res.ok) {
+const getTicket = async (id) => {
+  const supabase = createServerComponentClient({ cookies });
+  const { data } = await supabase
+    .from("Tickets")
+    .select()
+    .eq("id", id)
+    .single();
+  if (!data) {
     notFound();
   }
-  return res.json();
-}
+  return data;
+};
 
 export default async function TicketDetails({ params }) {
   const ticket = await getTicket(params.id);
+  const supabase = createServerComponentClient({ cookies });
+  const { data } = await supabase.auth.getSession();
 
   return (
     <main className="bg-light py-5">
@@ -57,6 +57,13 @@ export default async function TicketDetails({ params }) {
         <div className={`badge ${ticket.priority} text-white px-3 py-2`}>
           {ticket.priority} Priority
         </div>
+
+        {/* Priority Badge */}
+        {data.session.user.email === ticket.user_email && (
+          <div className={`badge px-3 py-2`}>
+            <DeleteButton id={ticket.id} />
+          </div>
+        )}
       </div>
     </main>
   );
