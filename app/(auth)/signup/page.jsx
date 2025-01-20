@@ -18,13 +18,13 @@ export default function SignUp() {
       email,
       password,
       options: {
-        emailRedirectTo: `${process.env.WEBSITE_LOCATION}/api/auth/callback`,
+        emailRedirectTo: `${location.origin}/api/auth/callback`,
       },
     });
 
     if (error) {
       setError(error);
-      setIsLoading(false)
+      setIsLoading(false);
     }
     if (!error) {
       setError("");
@@ -35,7 +35,11 @@ export default function SignUp() {
   return (
     <main className="justify-items-center w-100 my-5">
       <h4 className="text-primary fw-bold text-center mb-4">Sign up</h4>
-      <AuthForm handleSubmit={handleSubmit} isLoading={isLoading} process={"Sign up"} />
+      <AuthForm
+        handleSubmit={handleSubmit}
+        isLoading={isLoading}
+        process={"Sign up"}
+      />
       {error && <div>{error}</div>}
     </main>
   );

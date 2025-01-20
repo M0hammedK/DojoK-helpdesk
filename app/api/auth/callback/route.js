@@ -11,5 +11,5 @@ export async function GET(request) {
         await supabase.auth.exchangeCodeForSession(code)
     }
 
-    return NextResponse.redirect(process.env.WEBSITE_LOCATION)
+    return NextResponse.redirect(url.origin)
 }
