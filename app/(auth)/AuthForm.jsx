@@ -10,7 +10,7 @@ export default function AuthForm({ handleSubmit, isLoading, process }) {
   return (
     <form
       onSubmit={(e) => handleSubmit(e, email, password)}
-      className="bg-white p-4 rounded shadow-sm w-1/2"
+      className="bg-white p-4 rounded shadow-sm"
     >
       {/* Email Input */}
       <div className="mb-3">

@@ -6,7 +6,7 @@ export default function CreateForm() {
   return (
     <form
       action={addTicket}
-     className="bg-white p-4 rounded shadow-sm w-1/2 justify-self-center"
+     className="bg-white p-4 rounded shadow-sm justify-self-center w-100 p-5"
     >
 
       {/* Title Input */}
